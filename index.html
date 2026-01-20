@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Сундук героев</title>
+  <style>
+    /* Общие стили */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-primary: #0f0c1a;
+      --bg-secondary: #1a142b;
+      --card-bg: #221b38;
+      --text-primary: #e0d6ff;
+      --border-radius: 16px;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --glow-common: rgba(0, 150, 255, 0.3);
+      --glow-rare: rgba(255, 100, 0, 0.4);
+      --glow-epic: rgba(150, 0, 255, 0.6);
+      --glow-legendary: url('diamond-glow.png') no-repeat center;
+      --glow-champion: url('gold-glow.png') no-repeat center;
+      --color-not-owned: #555;
+      --color-partial: #4ecaff;
+      --color-collected: #b388ff;
+      --color-full: #ffd700;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary), #160f29);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(100, 40, 180, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(150, 50, 200, 0.1) 0%, transparent 20%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin: 16px 0 16px;
+      text-align: center;
+      background: linear-gradient(90deg, #b388ff, #ff9e6d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    /* Статистика коллекции */
+    .collection-stats {
+      display: flex;
+      justify-content: space-around;
+      background: var(--card-bg);
+      padding: 14px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      background: linear-gradient(90deg, #b388ff, #ff9e6d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #b3a0d9;
+    }
+
+    /* Аккаунты */
+    .account-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .account-btn {
+      padding: 10px 20px;
+      border: 2px solid #4a3a6e;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.25s ease;
+    }
+
+    .account-btn:hover {
+      background: #2d224a;
+      transform: translateY(-2px);
+    }
+
+    .account-btn.active {
+      background: linear-gradient(135deg, #6a4c93, #8a5be0);
+      border-color: #8a5be0;
+      box-shadow: 0 0 12px rgba(138, 91, 224, 0.5);
+    }
+
+    /* Сундук */
+    #chest-container {
+      text-align: center;
+      margin: 16px auto 24px;
+      max-width: 180px;
+      position: relative;
+    }
+
+    #chest {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.2s, filter 0.2s;
+      border-radius: 12px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+    }
+
+    #chest:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 8px 16px rgba(138, 91, 224, 0.7));
+    }
+
+    /* Герои */
+    #heroes-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .hero {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 16px; /* Увеличиваем внутренний отступ */
+  width: calc(25% - 20px); /* В одной строке будет 4 карточки (на широких экранах) */
+  min-width: 150px; /* Минимальная ширина карточки */
+  max-width: 200px; /* Максимальная ширина карточки */
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hero:hover {
+  transform: scale(1.05); /* Эффект увеличения при наведении */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+}
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: var(--border-radius);
+      padding: 2px;
+      background: linear-gradient(45deg, #6a4c93, #b388ff, #ff9e6d);
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .hero.not-owned::after { display: none; }
+    .hero.not-owned { opacity: 0.5; border: 2px dashed var(--color-not-owned); }
+
+    .hero.common::after { background: var(--glow-common); }
+    .hero.rare::after { background: var(--glow-rare); }
+    .hero.epic::after { background: var(--glow-epic); }
+    .hero.legendary::after { background: var(--glow-legendary); animation: diamondGlow 2s infinite; }
+    .hero.champion::after { background: var(--glow-champion); animation: goldParticles 3s infinite; }
+
+    @keyframes diamondGlow {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.5); }
+      100% { filter: brightness(1); }
+    }
+
+    @keyframes goldParticles {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    .hero img {
+  width: 100%;
+  height: 150px; /* Увеличиваем высоту изображения */
+  object-fit: cover; /* Изображение масштабируется правильно */
+  border-radius: 10px;
+  border: 2px solid #4a3a6e;
+    }
+
+    .hero-name {
+  font-size: 1rem; /* Увеличиваем размер текста */
+  margin-top: 12px;
+  font-weight: bold;
+  text-align: center;
+  word-break: break-word;
+    }
+
+    .pieces-count {
+  font-size: 0.85rem;
+  color: #b3a0d9;
+  margin-top: 8px;
+  text-align: center;
+    }
+
+    .progress-bar {
+  width: 100%;
+  height: 10px; /* Увеличиваем высоту прогресс-бара */
+  background: #33284f;
+  border-radius: 6px;
+  margin-top: 12px;
+  overflow: hidden;
+    }
+
+    .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8a5be0, #b388ff);
+  width: 0%;
+  transition: width 0.5s ease;
+    }
+
+    /* Модальное окно */
+    .modal {
+  display: none;
+  position: fixed;
+  z-index: 1001;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal img.modal-content {
+  max-width: 90%; /* Изображение занимает до 90% ширины экрана */
+  max-height: 90%; /* Изображение занимает до 90% высоты экрана */
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px; /* Округление углов */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Тень для эффекта глубины */
+}
+
+.close-btn {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #ccc;
+}
+
+.modal .modal-content {
+  background: var(--card-bg);
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow);
+  position: relative;
+  max-height: 80vh; /* Ограничиваем высоту окна */
+  overflow-y: auto; /* Добавляем вертикальную прокрутку */
+}
+
+    .modal .close-btn {
+      position: absolute;
+      right: 10px;
+      top: 5px;
+      font-size: 1.5rem;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .modal .close-btn:hover {
+      color: #fff;
+    }
+
+    .modal h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+.modal img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 16px;
+  display: block;
+  border: 2px solid #4a3a6e;
+}
+
+.hero-stats {
+  margin-bottom: 16px;
+  max-height: 150px; /* Ограничиваем высоту блока со статами */
+  overflow-y: auto; /* Добавляем прокрутку для статов */
+}
+
+    .hero-stats p {
+      margin: 8px 0;
+    }
+
+#modal-abilities {
+  list-style-type: none;
+  padding: 0;
+  max-height: 200px; /* Ограничиваем высоту списка способностей */
+  overflow-y: auto; /* Добавляем прокрутку для списка способностей */
+}
+
+    #modal-abilities li {
+      margin: 8px 0;
+      padding: 8px;
+      background: #33284f;
+      border-radius: 8px;
+    }
+
+    /* Кнопка сброса */
+    #reset-button {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+      z-index: 1002;
+    }
+
+    #reset-button:hover {
+      background: #cc0000;
+    }
+
+    /* Всплывающее окно выпадения */
+    #drop-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #drop-animation.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #drop-animation .drop-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      max-width: 300px;
+      width: 80%;
+      box-shadow: 0 0 30px rgba(0,0,0,0.7);
+      transform: scale(0.8);
+      animation: popIn 0.6s forwards;
+      position: relative;
+      border: 3px solid white;
+    }
+
+    #drop-animation .drop-card.rare { border-color: #4ecaff; box-shadow: 0 0 30px var(--glow-rare); }
+    #drop-animation .drop-card.epic { border-color: #b388ff; box-shadow: 0 0 30px var(--glow-epic); }
+    #drop-animation .drop-card.legendary { border-color: #ffd700; box-shadow: 0 0 40px var(--glow-legendary); }
+    #drop-animation .drop-card.champion { border-color: #ffd700; box-shadow: 0 0 50px var(--glow-champion); animation: championEffect 3s infinite; }
+
+    @keyframes championEffect {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    #drop-animation .drop-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 3px solid currentColor;
+    }
+
+    #drop-animation .rarity {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    #drop-animation .rarity.common { color: #ccc; }
+    #drop-animation .rarity.rare { color: #4ecaff; }
+    #drop-animation .rarity.epic { color: #b388ff; }
+    #drop-animation .rarity.legendary { color: #ffd700; }
+    #drop-animation .rarity.champion { color: #ffd700; text-shadow: 0 0 10px #ffd700; }
+
+    /* Адаптивность */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.6rem; }
+      .hero { width: calc(50% - 12px); }
+      #chest-container { max-width: 150px; }
+      .collection-stats { flex-direction: column; align-items: center; }
+    }
+
+    @media (max-width: 400px) {
+      .hero { width: 100%; max-width: 180px; }
+      .account-switcher { flex-direction: column; align-items: center; }
+      .account-btn { width: 100%; max-width: 200px; }
+    }
+
+    @media (max-width: 1200px) {
+  .hero {
+    width: calc(33.33% - 20px); /* В одной строке будет 3 карточки */
+  }
+}
+
+@media (max-width: 800px) {
+  .hero {
+    width: calc(50% - 20px); /* В одной строке будет 2 карточки */
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    width: 100%; /* На маленьких экранах одна карточка в строке */
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <h1>Сундук героев</h1>
+
+  <!-- Статистика коллекции -->
+  <div class="collection-stats">
+    <div class="stat-item">
+      <div class="stat-value" id="stat-full">0</div>
+      <div class="stat-label">Полностью собрано</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="stat-partial">0</div>
+      <div class="stat-label">Частично собрано</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="stat-progress">0%</div>
+      <div class="stat-label">Общий прогресс</div>
+    </div>
+  </div>
+
+  <div class="account-switcher">
+    <button class="account-btn active" data-account="1">Аккаунт 1</button>
+    <button class="account-btn" data-account="2">Аккаунт 2</button>
+    <button class="account-btn" data-account="3">Аккаунт 3</button>
+  </div>
+
+  <div id="chest-container">
+    <img id="chest" src="assets/chest.PNG" alt="Сундук">
+  </div>
+
+  <button id="reset-button">Сбросить данные</button>
+
+  <div id="heroes-container"></div>
+
+  <!-- Всплывающее окно выпадения -->
+  <div id="drop-animation">
+    <div class="drop-card" id="drop-card">
+      <div class="rarity" id="rarity-label"></div>
+      <img id="drop-hero-img" src="" alt="">
+      <div id="drop-hero-name"></div>
+    </div>
+  </div>
+
+  <!-- Модальное окно с информацией о герое -->
+  <div id="hero-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2 id="modal-hero-name"></h2>
+      <img id="modal-hero-img" src="" alt="Герой" />
+      <div class="hero-stats">
+        <p><strong>Урон:</strong> <span id="modal-damage"></span></p>
+        <p><strong>HP:</strong> <span id="modal-hp"></span></p>
+        <p><strong>Стоимость:</strong> <span id="modal-cost"></span> золота</p>
+      </div>
+      <h3>Способности:</h3>
+      <ul id="modal-abilities"></ul>
+    </div>
+  </div>
+
+  <!-- Модальное окно для просмотра изображений -->
+<div id="image-modal" class="modal">
+  <span class="close-btn">&times;</span>
+  <img id="full-image" class="modal-content" alt="Полный размер">
+</div>
+
+  <script>
+    const heroesData = {
+      common: [
+        { name: "Чёрная Вдова", damage: 1, hp: 2, cost: 1, abilities: ["Невидимость"], rarity: 'common' },
+        { name: "Роук", damage: 1, hp: 2, cost: 2, abilities: ["Использует способность противника"], rarity: 'common' },
+        { name: "Баки", damage: 2, hp: 3, cost: 3, abilities: ["Усиленный удар. X2"], rarity: 'common' },
+        { name: "Америка Чавес", damage: 1, hp: 3, cost: 3, abilities: ["Телепортируется на любую клетку"], rarity: 'common' },
+        { name: "Меченный", damage: 1, hp: 4, cost: 3, abilities: ["Стреляет по нескольким целям (максимум 3 цели)"], rarity: 'common' },
+        { name: "Краглин", damage: 1, hp: 4, cost: 3, abilities: ["Стреляет по нескольким целям (максимум 3 цели)"], rarity: 'common' },
+        { name: "Каратель", damage: 1, hp: 3, cost: 2, abilities: ["Ставит щит на 3 HP"], rarity: 'common' },
+        { name: "Мобиус", damage: 1, hp: 2, cost: 1, abilities: ["Убирает любого персонажа"], rarity: 'common' },
+        { name: "Тигр", damage: 2, hp: 3, cost: 1, abilities: ["Удвоенный урон и шанс уклонения 2 хода"], rarity: 'common' },
+        { name: "Дракс", damage: 2, hp: 3, cost: 1, abilities: ["Удвоенный урон и шанс уклонения 2 хода"], rarity: 'common' },
+        { name: "Лайла", damage: 2, hp: 3, cost: 3, abilities: ["Пролетает по выбранной линии и наносит всем по 1 урону", "Может прилететь любому члену команды на помощь. Нападает первым"], rarity: 'common' },
+        { name: "Шторм", damage: 1, hp: 3, cost: 3, abilities: ["Буря затягивает в одну точку. Наносит каждый ход по два урона."], rarity: 'common' },
+        { name: "Белая Королева", damage: 1, hp: 3, cost: 3, abilities: ["Каждый урон замораживает героя постепенно, на третий удар герой замораживается и не разморозится до тех пор пока его не освободят. Лёд (3HP)"], rarity: 'common' },
+        { name: "Циклоп", damage: 1, hp: 3, cost: 3, abilities: ["Стреляет лазером в одну точку супер ударом. -5 урона противнику."], rarity: 'common' },
+        { name: "Зверь", damage: 2, hp: 3, cost: 2, abilities: ["Уклоняется от урона 50%"], rarity: 'common' },
+        { name: "Джамбл Ли", damage: 1, hp: 3, cost: 2, abilities: ["Превращается в туман и восстанавливает всем здоровье +1 если больше трёх игроков; +2 если меньше трёх игроков; +3 если только себя."], rarity: 'common' },
+        { name: "Красный череп", damage: 1, hp: 2, cost: 1, abilities: ["Когда тебя побеждают, ты забираешь с собой того, кто тебя победил."], rarity: 'common' },
+        { name: "Гамора", damage: 2, hp: 2, cost: 2, abilities: ["x2 урон"], rarity: 'common' }
+      ],
+      rare: [
+        { name: "Елена", damage: 1, hp: 3, cost: 2, abilities: ["Оглушает противника на один ход", "Наносит удвоенный урон"], rarity: 'rare' },
+        { name: "Соколиный глаз", damage: 1, hp: 3, cost: 2, abilities: ["Взрывные стрелы (x2 урон)", "Туманные стрелы (невидимость 1 ход)", "Лечащие стрелы (+2 HP всем в округе)"], rarity: 'rare' },
+        { name: "Гвен Паук", damage: 1, hp: 4, cost: 4, abilities: ["Окутывает паутиной противника, и он пропускает ход", "Усиленное чутьё, получает 50% урона"], rarity: 'rare' },
+        { name: "Кейт Бишоп", damage: 1, hp: 3, cost: 2, abilities: ["Взрывные стрелы (x2 урон)", "Туманные стрелы (невидимость 1 ход)", "Лечащие стрелы (+2 HP всем в округе)"], rarity: 'rare' },
+        { name: "Сокол", damage: 1, hp: 3, cost: 3, abilities: ["Пролетает по выбранной линии и наносит всем по 1 урону", "Может прилететь любому члену команды на помощь. Нападает первым"], rarity: 'rare' },
+        { name: "Человек Паук", damage: 1, hp: 4, cost: 4, abilities: ["Окутывает паутиной противника, и он пропускает ход", "Усиленное чутьё, получает 50% урона"], rarity: 'rare' },
+        { name: "Дэдпул", damage: 2, hp: 4, cost: 4, abilities: ["Берёт на себя всё внимание, все атакуют по нему.", "Каждый ход регенерирует +1HP"], rarity: 'rare' },
+        { name: "Муза", damage: 1, hp: 4, cost: 3, abilities: ["Ставит метку на героя, и с каждым ходом противник слабеет, теряя -1HP", "Забирает противника в бункер (2 золота), там он становиться беззащитным пока кто-то не спасёт его, или пока не пройдёт 3 хода. Во время трёх ходов противник не может атаковать, но Муза может."], rarity: 'rare' },
+        { name: "Существо", damage: 1, hp: 4, cost: 3, abilities: ["Ставит щит на 5HP", "Усиливается удар. Обычный удар наносит 2 урона на три хода."], rarity: 'rare' },
+        { name: "Факел", damage: 1, hp: 3, cost: 2, abilities: ["Пролетает по выбранной линии и наносит всем по 1 урону", "Может прилететь любому члену команды на помощь. Нападает первым"], rarity: 'rare' },
+        { name: "Квил", damage: 2, hp: 3, cost: 3, abilities: ["Взлетает на два хода и становиться неуязвимым", "Начинает танцевать, +4 HP команде"], rarity: 'rare' },
+        { name: "Вижн", damage: 1, hp: 3, cost: 3, abilities: ["Каждый ход может кинуть усиление любому герою. Одно усиление добавляет +1 урон и +1 HP", "каждый полученный урон он преобразует в HP (максимум 3)"], rarity: 'rare' },
+        { name: "Адам", damage: 1, hp: 3, cost: 3, abilities: ["Каждый ход может кинуть усиление любому герою. Одно усиление добавляет +1 урон и +1 HP", "каждый полученный урон он преобразует в HP (максимум 3)"], rarity: 'rare' },
+        { name: "Хонсу", damage: 1, hp: 3, cost: 3, abilities: ["прикрепляется к герою и за один ход, ходят два персонажа.", "делается неуязвимым (вместе с героем) на два хода"], rarity: 'rare' },
+        { name: "Гамбит", damage: 1, hp: 3, cost: 3, abilities: ["оглушает противника если ударит", "раскидывает три взрывные карты. (1 карта 2 урона.)"], rarity: 'rare' },
+        { name: "Магнето", damage: 1, hp: 3, cost: 3, abilities: ["Ставит щит 5HP", "Притягивает героев на вражескую территорию и даёт ослабление. У противника -50% урона и -50% HP."], rarity: 'rare' },
+        { name: "Ракета", damage: 1, hp: 3, cost: 3, abilities: ["Удвоенный урон на 3 хода", "Ставит маленького енота в разведку к противнику (-2 HP у противника и пропускает ход)"], rarity: 'rare' }
+      ],
+      epic: [
+        { name: "Капитан Картер", damage: 1, hp: 4, cost: 4, abilities: ["Ставит щит команде 3HP", "Усиливает всю команду на 50% урона (2 хода)", "Щитом наносит урон двум героям сразу, если они рядом."], rarity: 'epic' },
+        { name: "Кристина", damage: 1, hp: 4, cost: 4, abilities: ["Присоединяется к персонажу. Теперь одним ходом ходишь за двоих.", "Лечит всех на 5 единиц", "Исследует противника, и с каждым ходом он становиться уязвимей. По противнику наноситься двойной урон. 1 этап – минус 2HP; 2 этап – пропускает ход;  3 этап – удвоенный урон."], rarity: 'epic' },
+        { name: "Доктор Стрендж", damage: 2, hp: 4, cost: 5, abilities: ["Щит всей команде 5HP", "Может перемотать время. (Противник пропускает ход)", "После использования этой способности, после трёх ходов Стрендж взлетает в воздух и наносит всем 3 урона, даже по вышке. После приземления на землю, он остаётся усиленным до смерти. (3 урона и 5 HP)"], rarity: 'epic' },
+        { name: "Фиск", damage: 2, hp: 6, cost: 5, abilities: ["Может строить специальные вышки которые будут приносить ему дополнительное золото. (Одна вышка = 2 золота, 2HP Производит за ход 1 золото) использовать способность можно несколько раз.", "Созывает специальную банду ниндзя «Рука». (Один  ниндзя = 1 золото стоимость, 2HP, 1ур) Максимум призванных 5 человек.", "Фиск может купить любого героя из команды противника и поставить его у себя в команду. Стоимость такого героя будет на один эликсир меньше."], rarity: 'epic' },
+        { name: "Канг", damage: 2, hp: 4, cost: 4, abilities: ["Созывает специальную команду. (Один  человек = 1 золото стоимость, 2HP, 1ур) Максимум призванных 5 человек.", "Создаёт новую планету, и одного из героев (даже те которые не выпущены) он может забрать туда и запереть.", "Создаёт щит на 5 HP"], rarity: 'epic' },
+        { name: "Халк", damage: 2, hp: 6, cost: 5, abilities: ["Урон x2", "Регенерация +5 HP", "Своим прыжком на носит урон всем героям. -2 HP каждому и даже башне."], rarity: 'epic' },
+        { name: "Человек Муравей", damage: 2, hp: 3, cost: 3, abilities: ["Становиться маленьким. Невидимым", "Шанс удвоенного урона и уворачивание от удара противника (2 раза)", "Может уменьшить любого персонажа, и все характеристики делятся на два."], rarity: 'epic' },
+        { name: "Кесси Лэнг", damage: 2, hp: 3, cost: 3, abilities: ["Становиться маленьким. Невидимым", "Шанс удвоенного урона и уворачивание от удара противника (2 раза)", "Может уменьшить любого персонажа, и все характеристики делятся на два."], rarity: 'epic' },
+        { name: "Оса", damage: 2, hp: 3, cost: 3, abilities: ["Становиться маленьким. Невидимым", "Шанс удвоенного урона и уворачивание от удара противника (2 раза)", "Может уменьшить любого персонажа, и все характеристики делятся на два."], rarity: 'epic' },
+        { name: "Сильвия", damage: 2, hp: 3, cost: 4, abilities: ["Становиться невидимой", "Создаёт новый участок земли, в который можно засадить любого героя. Он там остаётся пока его не вытащят.", "При нанесении урона противнику 5 ходов подряд, Сильвия взлетает на верх и наносит всем(даже башне) по 3 урона."], rarity: 'epic' },
+        { name: "Перчатка", damage: 1, hp: 4, cost: 5, abilities: ["Каждый ход приносит +1 золото", "Каждый ход ты можешь кинуть усиление герою (+1 HP и +1 урон)", "После нанесения 6 урона, ты уничтожаешь всех героев (и даже башню)"], rarity: 'epic' },
+        { name: "Галактус", damage: 1, hp: 5, cost: 4, abilities: ["Засасывает в торнадо одного противника (пропуск хода)", "С середины поля, Галактус может бить по вышке.", "За каждого побеждённого им противника, игрок получает +2 золота"], rarity: 'epic' },
+        { name: "Мистер Фантастик", damage: 1, hp: 3, cost: 2, abilities: ["Может перешагивать клетки", "Может увернуться от урона"], rarity: 'epic' },
+        { name: "Блэйд", damage: 2, hp: 4, cost: 3, abilities: ["Увеличивается урон 2x на 3 хода", "Лечит себя и союзников на 5 HP"], rarity: 'epic' },
+        { name: "Джин Грей", damage: 2, hp: 4, cost: 4, abilities: ["С каждым побеждённым героем, она становиться всё сильнее. (+1 урон и +1 HP)", "Пролетает по одной стороне и наносит всем по 2 урона", "Взлетает в верх и уничтожает всех героев. Кроме Росомахи."], rarity: 'epic' },
+        { name: "Часовой", damage: 1, hp: 3, cost: 3, abilities: ["Противник пропускает ход","Боб становиться неуязвимым на два хода","За каждого побеждённого героя, в команду прибавляется отряд теней (2HP 1 урон) даже если умер твой герой."], rarity: 'epic' }
+        ],
+      legendary: [
+        { name: "Росомаха", damage: 2, hp: 4, cost: 4, abilities: ["Получает на 50% меньше урона", "x2 урона", "Когда он будет при смерти, он сделает последний рывок, который добивает противника, несмотря на то сколько у него HP"], rarity: 'legendary' },
+        { name: "Капитан Америка", damage: 2, hp: 4, cost: 3, abilities: ["Ставит всем щит 3 HP", "За один ход можно походить всеми героями одновремено", "За каждого побеждённого врага, даётся доп. ход"], rarity: 'legendary' },
+        { name: "Железный человек", damage: 1, hp: 4, cost: 3, abilities: ["Ставит за одно золото ещё один робо-костюм. Максимум 5. (1HP и 1ур)", "Ставит маленькую башню на 5 HP, которая приносит дополнительное золото и лечит башню. (Стоимость башни 3 золота)", "Выстреливает лазером в центр и всем наносит урон. Чем ближе к середине тем больше урон. Макс урон = 4HP. Мин урон. = 1HP"], rarity: 'legendary' },
+        { name: "Тор", damage: 2, hp: 4, cost: 4, abilities: ["Противник пропускает ход.", "Усиленный урон в два раза", "Присоединяется к герою который уже с кем то в бою. Один ход=два героя."], rarity: 'legendary' },
+        { name: "Танос", damage: 2, hp: 6, cost: 5, abilities: ["Может драться сразу с несколькими противниками.", "Созывает команду пришельцев. (1 пришелец = 1 побеждённый герой)", "Достаёт перчатку бесконечности, и спустя 6 ходов уничтожает всё поле вместе с базой."], rarity: 'legendary' },
+        { name: "Дум", damage: 3, hp: 5, cost: 5, abilities: ["Может драться сразу с несколькими противниками.", "Созывает команду героев. (любых) каждых ход 1 герой. Максимум 3 героя.", "Создаёт копию башни (10 HP) в середине. Если на поле не кого не останется, противник проигрывает."], rarity: 'legendary' },
+        { name: "Неведомка", damage: 2, hp: 4, cost: 3, abilities: ["Ставит всем щит 5HP", "Делает всех невидимыми на 2 хода", "Лечит всех по 2 HP"], rarity: 'legendary' },
+        { name: "Мантис", damage: 1, hp: 4, cost: 3, abilities: ["Ставит всем щит 5HP", "Делает всех неуязвимыми на 2 хода", "Лечит всех по 2 HP"], rarity: 'legendary' }
+      ],
+      champion: [
+        { name: "Тёмный Стрендж", damage: 3, hp: 5, cost: 6, abilities: ["Создаёт совершено новое поле в которое он постепенно перекидывает героев. От туда можно выбраться полностью разрушив измерение.", "Стрендж зачаровывает команду и теперь вся команда вместе с башней отражает 50% полученного урона.", "Он садиться в центре поля. И Если за 3 хода не успеть что то предпринять, он уничтожает мир.", "При Использовании Супера, Стрендж может призвать на помощь любого из героев, даже тех которых у него нет в команде."], rarity: 'champion' },
+        { name: "Сорвиголова", damage: 2, hp: 5, cost: 6, abilities: ["Уворачивается от урона на 75%", "Если первым нападает, удваивается урон", "Если у противника остаётся меньше 2HP, он проигрывает сразу.", "Быстро перемещается по карте и может присоединиться к любому герою в помощь."], rarity: 'champion' },
+        { name: "Алая Ведьма", damage: 3, hp: 4, cost: 6, abilities: ["Создаёт совершено новое поле в которое она постепенно перекидывает героев. От туда можно выбраться полностью разрушив измерение.", "Ванда зачаровывает команду и теперь вся команда вместе с башней отражает 50% полученного урона.", "Она садиться в центре поля. И Если за 3 хода не успеть что то предпринять, она уничтожает мир.", "Воскрешает твоих умерших героев."], rarity: 'champion' },
+        { name: "Локи", damage: 1, hp: 2, cost: 4, abilities: ["Он садиться на трон, и каждый побеждённый герой усиливает Урон Локи и здоровье.", "Локи создаёт ветку времени. Из 5 карт. Если он успеет по ней пройти он победил. Чтобы не дать Локи пройти нужно поставить персонажа за предел реальности и победить его.", "Локи может отменить покупку героя противника.", "Локи ставит у базы новые 3 корня. У каждого по 2 HP."], rarity: 'champion' },
+        { name: "Веном", damage: 2, hp: 5, cost: 5, abilities: ["Каждый побеждённый герой усиливает Урон и здоровье Венома.", "Когда у Венома остаётся меньше двух HP, он оставляет частичку себя(3HP), и если за три хода не победить её, он воскрешает Венома, если Веном жив то щупальце становиться его второй копией, и вселяется в героя становясь Веномом.", "Веном восстанавливает 5 HP союзникам если щупальце осталось живым.", "Ставит башню на середину 3 HP, если башня выживет 3 хода, Веном захватывает всю территорию и может спокойно становиться у башни противника."], rarity: 'champion' },
+        { name: "Красный Халк", damage: 2, hp: 6, cost: 5, abilities: ["Урон x2", "Регенерация +5 HP", "Своим прыжком наносит урон всем героям. -2 HP каждому и даже башне.", "Если атаковать в близи он поджигает героя и наносит за каждый удар по 1 урону."], rarity: 'champion' }
+      ]
+    };
+
+    const rarityWeights = [65, 22, 10, 2.5, 0.5];
+    const rarities = ['common', 'rare', 'epic', 'legendary', 'champion'];
+    const rarityNames = {
+      common: 'Обычный',
+      rare: 'Редкий',
+      epic: 'Эпический',
+      legendary: 'Легендарный',
+      champion: 'Чемпион'
+    };
+
+    const requiredPieces = {
+      common: 15,
+      rare: 10,
+      epic: 6,
+      legendary: 3,
+      champion: 1
+    };
+
+    let currentAccount = localStorage.getItem('currentAccount') || '1';
+
+    function initAccountData() {
+      const key = `heroCounts_account_${currentAccount}`;
+      let data = localStorage.getItem(key);
+      if (!data) {
+        const defaultData = {};
+        Object.values(heroesData).flat().forEach(hero => defaultData[hero.name] = 0);
+        localStorage.setItem(key, JSON.stringify(defaultData));
+        return defaultData;
+      }
+      return JSON.parse(data);
+    }
+
+    function saveAccountData(data) {
+      const key = `heroCounts_account_${currentAccount}`;
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function getCollectionStatus(hero, count) {
+      const rarity = hero.rarity;
+      const required = requiredPieces[rarity];
+
+      if (count === 0) return 'not-owned';
+      if (count < required) return 'partial';
+      return 'full';
+    }
+
+    function updateStats(data) {
+      let full = 0, partial = 0, totalPieces = 0;
+      const maxTotal = Object.values(heroesData).flat().reduce((sum, hero) => sum + requiredPieces[hero.rarity], 0);
+
+      Object.values(heroesData).flat().forEach(hero => {
+        const count = data[hero.name] || 0;
+        totalPieces += count;
+        const status = getCollectionStatus(hero, count);
+        if (status === 'full') full++;
+        else if (status === 'partial') partial++;
+      });
+
+      const progressPercent = Math.round((totalPieces / maxTotal) * 100);
+
+      document.getElementById('stat-full').textContent = full;
+      document.getElementById('stat-partial').textContent = partial;
+      document.getElementById('stat-progress').textContent = `${progressPercent}%`;
+    }
+
+function renderHeroes() {
+  const container = document.getElementById('heroes-container');
+  const data = initAccountData();
+  container.innerHTML = '';
+
+  Object.values(heroesData).flat().forEach(hero => {
+    const count = data[hero.name] || 0;
+    const status = getCollectionStatus(hero, count);
+    const required = requiredPieces[hero.rarity];
+    const progressPercent = Math.min(100, (count / required) * 100);
+
+    const heroDiv = document.createElement('div');
+    heroDiv.className = `hero ${status} ${hero.rarity}`;
+    heroDiv.innerHTML = `
+      <img src="${getHeroImageUrl(hero.name)}" alt="${hero.name}" loading="lazy">
+      <div class="hero-name">${hero.name}</div>
+      <div class="pieces-count">${count}/${required}</div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progressPercent}%"></div>
+      </div>
+    `;
+    container.appendChild(heroDiv);
+  });
+
+  updateStats(data);
+}
+
+    function getRarityByWeight() {
+      const total = rarityWeights.reduce((a, b) => a + b, 0);
+      let rand = Math.random() * total;
+      for (let i = 0; i < rarityWeights.length; i++) {
+        if (rand < rarityWeights[i]) return rarities[i];
+        rand -= rarityWeights[i];
+      }
+      return 'common';
+    }
+
+    function getHeroImageUrl(name) {
+// Преобразуем имя героя в нижний регистр и заменяем пробелы на дефисы
+  const fileName = name.toLowerCase().replace(/ /g, '-') + '.jfif';
+  return `assets/heroes/${fileName}`;
+    }
+
+    function showDropAnimation(heroName, rarity) {
+      const dropEl = document.getElementById('drop-animation');
+      const card = document.getElementById('drop-card');
+      const nameEl = document.getElementById('drop-hero-name');
+      const imgEl = document.getElementById('drop-hero-img');
+      const rarityEl = document.getElementById('rarity-label');
+
+      nameEl.textContent = heroName;
+      imgEl.src = getHeroImageUrl(heroName);
+      rarityEl.textContent = rarityNames[rarity];
+      rarityEl.className = `rarity ${rarity}`;
+      card.className = `drop-card ${rarity}`;
+
+      dropEl.classList.add('show');
+      setTimeout(() => dropEl.classList.remove('show'), 3000);
+    }
+
+    function openChest() {
+      const data = initAccountData();
+      const rarity = getRarityByWeight();
+      const category = heroesData[rarity];
+      const randomHero = category[Math.floor(Math.random() * category.length)];
+
+      data[randomHero.name] = (data[randomHero.name] || 0) + 1;
+      saveAccountData(data);
+      renderHeroes();
+      showDropAnimation(randomHero.name, rarity);
+    }
+
+    function switchAccount(accountId) {
+      currentAccount = accountId;
+      localStorage.setItem('currentAccount', accountId);
+      updateAccountButtons();
+      renderHeroes();
+    }
+
+    function updateAccountButtons() {
+      document.querySelectorAll('.account-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.account === currentAccount);
+      });
+    }
+
+    function showModal(heroName) {
+      const modal = document.getElementById('hero-modal');
+      const closeBtn = modal.querySelector('.close-btn');
+      const hero = Object.values(heroesData).flat().find(h => h.name === heroName);
+
+      if (!hero) return;
+
+      document.getElementById('modal-hero-name').textContent = heroName;
+      document.getElementById('modal-hero-img').src = getHeroImageUrl(heroName);
+      document.getElementById('modal-damage').textContent = hero.damage;
+      document.getElementById('modal-hp').textContent = hero.hp;
+      document.getElementById('modal-cost').textContent = hero.cost;
+
+      // Добавление информации о редкости
+      const rarityLabel = document.createElement('p');
+      rarityLabel.innerHTML = `<strong>Редкость:</strong> ${rarityNames[hero.rarity]}`;
+      modal.querySelector('.hero-stats').prepend(rarityLabel);
+
+      const abilitiesList = document.getElementById('modal-abilities');
+      abilitiesList.innerHTML = '';
+      hero.abilities.forEach(ability => {
+        const li = document.createElement('li');
+        li.textContent = ability;
+        abilitiesList.appendChild(li);
+      });
+
+      modal.style.display = 'block';
+
+      closeBtn.onclick = () => {
+        modal.style.display = 'none';
+        modal.querySelector('.hero-stats').removeChild(rarityLabel); // Удаление редкости после закрытия
+      };
+
+      window.onclick = event => {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+          modal.querySelector('.hero-stats').removeChild(rarityLabel); // Удаление редкости после закрытия
+        }
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAccountButtons();
+      renderHeroes();
+
+      document.getElementById('chest').addEventListener('click', openChest);
+      document.querySelectorAll('.account-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchAccount(btn.dataset.account));
+      });
+
+      document.getElementById('heroes-container').addEventListener('click', event => {
+        const heroCard = event.target.closest('.hero');
+        if (heroCard) {
+          const heroName = heroCard.querySelector('.hero-name').textContent;
+          showModal(heroName);
+        }
+      });
+
+      document.getElementById('reset-button').addEventListener('click', () => {
+        localStorage.clear();
+        location.reload();
+      });
+    });
+
+   // Открытие изображений в полном размере
+document.getElementById('heroes-container').addEventListener('click', event => {
+  const clickedImage = event.target.closest('.hero img');
+  if (clickedImage) {
+    const modal = document.getElementById('image-modal');
+    const fullImage = document.getElementById('full-image');
+
+    // Устанавливаем источник изображения
+    fullImage.src = clickedImage.src;
+
+    // Показываем модальное окно
+    modal.style.display = 'block';
+
+    // Закрытие модального окна
+    modal.querySelector('.close-btn').onclick = () => {
+      modal.style.display = 'none';
+    };
+
+    // Закрытие при клике вне изображения
+    window.onclick = event => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    };
+
+    // Полноэкранный режим (опционально)
+    fullImage.addEventListener('click', () => {
+      if (fullImage.requestFullscreen) {
+        fullImage.requestFullscreen();
+      } else if (fullImage.mozRequestFullScreen) { // Firefox
+        fullImage.mozRequestFullScreen();
+      } else if (fullImage.webkitRequestFullscreen) { // Chrome, Safari and Opera
+        fullImage.webkitRequestFullscreen();
+      } else if (fullImage.msRequestFullscreen) { // IE/Edge
+        fullImage.msRequestFullscreen();
+      }
+    });
+  }
+});
+  </script>
+</body>
+</html>
