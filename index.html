@@ -157,23 +157,23 @@
     }
 
     .hero {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 16px; /* Увеличиваем внутренний отступ */
-  width: calc(25% - 20px); /* В одной строке будет 4 карточки (на широких экранах) */
-  min-width: 150px; /* Минимальная ширина карточки */
-  max-width: 200px; /* Максимальная ширина карточки */
-  box-shadow: var(--shadow);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 16px;
+      width: calc(25% - 20px);
+      min-width: 150px;
+      max-width: 200px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .hero:hover {
-  transform: scale(1.05); /* Эффект увеличения при наведении */
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
-}
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+    }
 
     .hero::after {
       content: '';
@@ -211,93 +211,93 @@
     }
 
     .hero img {
-  width: 100%;
-  height: 150px; /* Увеличиваем высоту изображения */
-  object-fit: cover; /* Изображение масштабируется правильно */
-  border-radius: 10px;
-  border: 2px solid #4a3a6e;
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid #4a3a6e;
     }
 
     .hero-name {
-  font-size: 1rem; /* Увеличиваем размер текста */
-  margin-top: 12px;
-  font-weight: bold;
-  text-align: center;
-  word-break: break-word;
+      font-size: 1rem;
+      margin-top: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-break: break-word;
     }
 
     .pieces-count {
-  font-size: 0.85rem;
-  color: #b3a0d9;
-  margin-top: 8px;
-  text-align: center;
+      font-size: 0.85rem;
+      color: #b3a0d9;
+      margin-top: 8px;
+      text-align: center;
     }
 
     .progress-bar {
-  width: 100%;
-  height: 10px; /* Увеличиваем высоту прогресс-бара */
-  background: #33284f;
-  border-radius: 6px;
-  margin-top: 12px;
-  overflow: hidden;
+      width: 100%;
+      height: 10px;
+      background: #33284f;
+      border-radius: 6px;
+      margin-top: 12px;
+      overflow: hidden;
     }
 
     .progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #8a5be0, #b388ff);
-  width: 0%;
-  transition: width 0.5s ease;
+      height: 100%;
+      background: linear-gradient(90deg, #8a5be0, #b388ff);
+      width: 0%;
+      transition: width 0.5s ease;
     }
 
     /* Модальное окно */
     .modal {
-  display: none;
-  position: fixed;
-  z-index: 1001;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
     }
 
     .modal img.modal-content {
-  max-width: 90%; /* Изображение занимает до 90% ширины экрана */
-  max-height: 90%; /* Изображение занимает до 90% высоты экрана */
-  margin: auto;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 10px; /* Округление углов */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Тень для эффекта глубины */
-}
+      max-width: 90%;
+      max-height: 90%;
+      margin: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
 
-.close-btn {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  font-size: 2rem;
-  color: #fff;
-  cursor: pointer;
-}
+    .close-btn {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+    }
 
-.close-btn:hover {
-  color: #ccc;
-}
+    .close-btn:hover {
+      color: #ccc;
+    }
 
-.modal .modal-content {
-  background: var(--card-bg);
-  margin: 10% auto;
-  padding: 20px;
-  border-radius: var(--border-radius);
-  width: 90%;
-  max-width: 400px;
-  box-shadow: var(--shadow);
-  position: relative;
-  max-height: 80vh; /* Ограничиваем высоту окна */
-  overflow-y: auto; /* Добавляем вертикальную прокрутку */
-}
+    .modal .modal-content {
+      background: var(--card-bg);
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
 
     .modal .close-btn {
       position: absolute;
@@ -317,32 +317,32 @@
       margin-bottom: 10px;
     }
 
-.modal img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 16px;
-  display: block;
-  border: 2px solid #4a3a6e;
-}
+    .modal img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 16px;
+      display: block;
+      border: 3px solid #4a3a6e;
+    }
 
-.hero-stats {
-  margin-bottom: 16px;
-  max-height: 150px; /* Ограничиваем высоту блока со статами */
-  overflow-y: auto; /* Добавляем прокрутку для статов */
-}
+    .hero-stats {
+      margin-bottom: 16px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
 
     .hero-stats p {
       margin: 8px 0;
     }
 
-#modal-abilities {
-  list-style-type: none;
-  padding: 0;
-  max-height: 200px; /* Ограничиваем высоту списка способностей */
-  overflow-y: auto; /* Добавляем прокрутку для списка способностей */
-}
+    #modal-abilities {
+      list-style-type: none;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
 
     #modal-abilities li {
       margin: 8px 0;
@@ -351,24 +351,76 @@
       border-radius: 8px;
     }
 
-    /* Кнопка сброса */
-    #reset-button {
+    /* Кнопка экспорта */
+    #export-button {
       position: fixed;
       bottom: 10px;
-      right: 10px;
-      background: #ff4d4d;
+      left: 10px;
+      background: linear-gradient(135deg, #6a4c93, #8a5be0);
       color: white;
       border: none;
       padding: 10px 20px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
-      transition: background 0.3s ease;
+      transition: all 0.25s ease;
       z-index: 1002;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     }
 
-    #reset-button:hover {
-      background: #cc0000;
+    #export-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Скрытая кнопка сброса */
+    #reset-button {
+      display: none;
+    }
+
+    /* Баннер события */
+    #event-banner {
+      position: fixed;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: url(assets/IMG_1406.PNG) no-repeat center/cover;
+      width: 100%;
+      max-width: 800px;
+      height: 100px;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      box-sizing: border-box;
+      z-index: 1001;
+    }
+
+    #event-banner div {
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    #event-chest {
+      background: #b388ff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    #event-chest:hover {
+      background: #9c6ccf;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
     }
 
     /* Всплывающее окно выпадения */
@@ -459,23 +511,16 @@
     }
 
     @media (max-width: 1200px) {
-  .hero {
-    width: calc(33.33% - 20px); /* В одной строке будет 3 карточки */
-  }
-}
+      .hero { width: calc(33.33% - 20px); }
+    }
 
-@media (max-width: 800px) {
-  .hero {
-    width: calc(50% - 20px); /* В одной строке будет 2 карточки */
-  }
-}
+    @media (max-width: 800px) {
+      .hero { width: calc(50% - 20px); }
+    }
 
-@media (max-width: 600px) {
-  .hero {
-    width: 100%; /* На маленьких экранах одна карточка в строке */
-  }
-}
-
+    @media (max-width: 600px) {
+      .hero { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -508,7 +553,11 @@
     <img id="chest" src="assets/chest.PNG" alt="Сундук">
   </div>
 
+  <!-- Скрытая кнопка сброса -->
   <button id="reset-button">Сбросить данные</button>
+  
+  <!-- Кнопка экспорта -->
+  <button id="export-button">Экспорт данных</button>
 
   <div id="heroes-container"></div>
 
@@ -538,10 +587,16 @@
   </div>
 
   <!-- Модальное окно для просмотра изображений -->
-<div id="image-modal" class="modal">
-  <span class="close-btn">&times;</span>
-  <img id="full-image" class="modal-content" alt="Полный размер">
-</div>
+  <div id="image-modal" class="modal">
+    <span class="close-btn">&times;</span>
+    <img id="full-image" class="modal-content" alt="Полный размер">
+  </div>
+
+  <!-- Баннер события -->
+  <div id="event-banner">
+    <div>Событие: Я есть Грут</div>
+    <button id="event-chest">Открыть сундук</button>
+  </div>
 
   <script>
     const heroesData = {
@@ -573,7 +628,7 @@
         { name: "Сокол", damage: 1, hp: 3, cost: 3, abilities: ["Пролетает по выбранной линии и наносит всем по 1 урону", "Может прилететь любому члену команды на помощь. Нападает первым"], rarity: 'rare' },
         { name: "Человек Паук", damage: 1, hp: 4, cost: 4, abilities: ["Окутывает паутиной противника, и он пропускает ход", "Усиленное чутьё, получает 50% урона"], rarity: 'rare' },
         { name: "Дэдпул", damage: 2, hp: 4, cost: 4, abilities: ["Берёт на себя всё внимание, все атакуют по нему.", "Каждый ход регенерирует +1HP"], rarity: 'rare' },
-        { name: "Муза", damage: 1, hp: 4, cost: 3, abilities: ["Ставит метку на героя, и с каждым ходом противник слабеет, теряя -1HP", "Забирает противника в бункер (2 золота), там он становиться беззащитным пока кто-то не спасёт его, или пока не пройдёт 3 хода. Во время трёх ходов противник не может атаковать, но Муза может."], rarity: 'rare' },
+        { name: "Муза", damage: 1, hp: 4, cost: 3, abilities: ["Ставит метку на героя, и с каждым ходом противник слабеет, теряя -1HP", "Забирает противника в бункер (2 золота), там он становиться беззащитным пока его не спасут, или пока не пройдёт 3 хода. Во время трёх ходов противник не может атаковать, но Муза может."], rarity: 'rare' },
         { name: "Существо", damage: 1, hp: 4, cost: 3, abilities: ["Ставит щит на 5HP", "Усиливается удар. Обычный удар наносит 2 урона на три хода."], rarity: 'rare' },
         { name: "Факел", damage: 1, hp: 3, cost: 2, abilities: ["Пролетает по выбранной линии и наносит всем по 1 урону", "Может прилететь любому члену команды на помощь. Нападает первым"], rarity: 'rare' },
         { name: "Квил", damage: 2, hp: 3, cost: 3, abilities: ["Взлетает на два хода и становиться неуязвимым", "Начинает танцевать, +4 HP команде"], rarity: 'rare' },
@@ -582,7 +637,8 @@
         { name: "Хонсу", damage: 1, hp: 3, cost: 3, abilities: ["прикрепляется к герою и за один ход, ходят два персонажа.", "делается неуязвимым (вместе с героем) на два хода"], rarity: 'rare' },
         { name: "Гамбит", damage: 1, hp: 3, cost: 3, abilities: ["оглушает противника если ударит", "раскидывает три взрывные карты. (1 карта 2 урона.)"], rarity: 'rare' },
         { name: "Магнето", damage: 1, hp: 3, cost: 3, abilities: ["Ставит щит 5HP", "Притягивает героев на вражескую территорию и даёт ослабление. У противника -50% урона и -50% HP."], rarity: 'rare' },
-        { name: "Ракета", damage: 1, hp: 3, cost: 3, abilities: ["Удвоенный урон на 3 хода", "Ставит маленького енота в разведку к противнику (-2 HP у противника и пропускает ход)"], rarity: 'rare' }
+        { name: "Ракета", damage: 1, hp: 3, cost: 3, abilities: ["Удвоенный урон на 3 хода", "Ставит маленького енота в разведку к противнику (-2 HP у противника и пропускает ход)"], rarity: 'rare' },
+        { name: "Грут", damage: 1, hp: 4, cost: 3, abilities: ["Ставит всем щит на 5 HP","Когда его побеждают, он становиться маленьким ростком, и через два хода он возраждается."], rarity: 'rare' }
       ],
       epic: [
         { name: "Капитан Картер", damage: 1, hp: 4, cost: 4, abilities: ["Ставит щит команде 3HP", "Усиливает всю команду на 50% урона (2 хода)", "Щитом наносит урон двум героям сразу, если они рядом."], rarity: 'epic' },
@@ -601,7 +657,7 @@
         { name: "Блэйд", damage: 2, hp: 4, cost: 3, abilities: ["Увеличивается урон 2x на 3 хода", "Лечит себя и союзников на 5 HP"], rarity: 'epic' },
         { name: "Джин Грей", damage: 2, hp: 4, cost: 4, abilities: ["С каждым побеждённым героем, она становиться всё сильнее. (+1 урон и +1 HP)", "Пролетает по одной стороне и наносит всем по 2 урона", "Взлетает в верх и уничтожает всех героев. Кроме Росомахи."], rarity: 'epic' },
         { name: "Часовой", damage: 1, hp: 3, cost: 3, abilities: ["Противник пропускает ход","Боб становиться неуязвимым на два хода","За каждого побеждённого героя, в команду прибавляется отряд теней (2HP 1 урон) даже если умер твой герой."], rarity: 'epic' }
-        ],
+      ],
       legendary: [
         { name: "Росомаха", damage: 2, hp: 4, cost: 4, abilities: ["Получает на 50% меньше урона", "x2 урона", "Когда он будет при смерти, он сделает последний рывок, который добивает противника, несмотря на то сколько у него HP"], rarity: 'legendary' },
         { name: "Капитан Америка", damage: 2, hp: 4, cost: 3, abilities: ["Ставит всем щит 3 HP", "За один ход можно походить всеми героями одновремено", "За каждого побеждённого врага, даётся доп. ход"], rarity: 'legendary' },
@@ -641,6 +697,7 @@
     };
 
     let currentAccount = localStorage.getItem('currentAccount') || '1';
+    let excludedHeroes = {}; // Список исключенных героев
 
     function initAccountData() {
       const key = `heroCounts_account_${currentAccount}`;
@@ -687,47 +744,70 @@
       document.getElementById('stat-progress').textContent = `${progressPercent}%`;
     }
 
-function renderHeroes() {
-  const container = document.getElementById('heroes-container');
-  const data = initAccountData();
-  container.innerHTML = '';
+    function renderHeroes() {
+      const container = document.getElementById('heroes-container');
+      const data = initAccountData();
+      container.innerHTML = '';
 
-  Object.values(heroesData).flat().forEach(hero => {
-    const count = data[hero.name] || 0;
-    const status = getCollectionStatus(hero, count);
-    const required = requiredPieces[hero.rarity];
-    const progressPercent = Math.min(100, (count / required) * 100);
+      Object.values(heroesData).flat().forEach(hero => {
+        const count = data[hero.name] || 0;
+        const status = getCollectionStatus(hero, count);
+        const required = requiredPieces[hero.rarity];
+        const progressPercent = Math.min(100, (count / required) * 100);
 
-    const heroDiv = document.createElement('div');
-    heroDiv.className = `hero ${status} ${hero.rarity}`;
-    heroDiv.innerHTML = `
-      <img src="${getHeroImageUrl(hero.name)}" alt="${hero.name}" loading="lazy">
-      <div class="hero-name">${hero.name}</div>
-      <div class="pieces-count">${count}/${required}</div>
-      <div class="progress-bar">
-        <div class="progress-fill" style="width: ${progressPercent}%"></div>
-      </div>
-    `;
-    container.appendChild(heroDiv);
-  });
+        // Обновляем список исключенных героев
+        if(status === 'full'){
+          excludedHeroes[hero.name] = true;
+        } else {
+          delete excludedHeroes[hero.name];
+        }
 
-  updateStats(data);
-}
+        const heroDiv = document.createElement('div');
+        heroDiv.className = `hero ${status} ${hero.rarity}`;
+        heroDiv.innerHTML = `
+          <img src="${getHeroImageUrl(hero.name)}" alt="${hero.name}" loading="lazy">
+          <div class="hero-name">${hero.name}</div>
+          <div class="pieces-count">${count}/${required}</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+          </div>
+        `;
+        container.appendChild(heroDiv);
+      });
+
+      updateStats(data);
+    }
 
     function getRarityByWeight() {
-      const total = rarityWeights.reduce((a, b) => a + b, 0);
-      let rand = Math.random() * total;
-      for (let i = 0; i < rarityWeights.length; i++) {
-        if (rand < rarityWeights[i]) return rarities[i];
-        rand -= rarityWeights[i];
+      // Пересчитываем веса, исключая полностью собранных героев
+      let availableWeights = [...rarityWeights];
+      let totalAvailable = 0;
+
+      rarities.forEach((rarity, index) => {
+        const category = heroesData[rarity];
+        const availableHeroes = category.filter(hero => !excludedHeroes[hero.name]);
+        if(availableHeroes.length === 0) {
+          availableWeights[index] = 0;
+        }
+        totalAvailable += availableWeights[index];
+      });
+
+      // Если все герои собраны
+      if(totalAvailable === 0) return null;
+
+      let rand = Math.random() * totalAvailable;
+      for(let i = 0; i < availableWeights.length; i++) {
+        if(availableWeights[i] > 0){
+          if(rand < availableWeights[i]) return rarities[i];
+          rand -= availableWeights[i];
+        }
       }
       return 'common';
     }
 
     function getHeroImageUrl(name) {
-// Преобразуем имя героя в нижний регистр и заменяем пробелы на дефисы
-  const fileName = name.toLowerCase().replace(/ /g, '-') + '.jfif';
-  return `assets/heroes/${fileName}`;
+      const fileName = name.toLowerCase().replace(/ /g, '-') + '.jfif';
+      return `assets/heroes/${fileName}`;
     }
 
     function showDropAnimation(heroName, rarity) {
@@ -750,8 +830,15 @@ function renderHeroes() {
     function openChest() {
       const data = initAccountData();
       const rarity = getRarityByWeight();
+
+      if(!rarity) {
+        alert("Все герои собраны!");
+        return;
+      }
+
       const category = heroesData[rarity];
-      const randomHero = category[Math.floor(Math.random() * category.length)];
+      const availableHeroes = category.filter(hero => !excludedHeroes[hero.name]);
+      const randomHero = availableHeroes[Math.floor(Math.random() * availableHeroes.length)];
 
       data[randomHero.name] = (data[randomHero.name] || 0) + 1;
       saveAccountData(data);
@@ -785,7 +872,6 @@ function renderHeroes() {
       document.getElementById('modal-hp').textContent = hero.hp;
       document.getElementById('modal-cost').textContent = hero.cost;
 
-      // Добавление информации о редкости
       const rarityLabel = document.createElement('p');
       rarityLabel.innerHTML = `<strong>Редкость:</strong> ${rarityNames[hero.rarity]}`;
       modal.querySelector('.hero-stats').prepend(rarityLabel);
@@ -802,16 +888,59 @@ function renderHeroes() {
 
       closeBtn.onclick = () => {
         modal.style.display = 'none';
-        modal.querySelector('.hero-stats').removeChild(rarityLabel); // Удаление редкости после закрытия
+        modal.querySelector('.hero-stats').removeChild(rarityLabel);
       };
 
       window.onclick = event => {
         if (event.target === modal) {
           modal.style.display = 'none';
-          modal.querySelector('.hero-stats').removeChild(rarityLabel); // Удаление редкости после закрытия
+          modal.querySelector('.hero-stats').removeChild(rarityLabel);
         }
       };
     }
+
+    // Экспорт данных
+    document.getElementById('export-button').addEventListener('click', () => {
+      let exportText = "";
+
+      for(let i = 1; i <= 3; i++){
+        const key = `heroCounts_account_${i}`;
+        const accountData = JSON.parse(localStorage.getItem(key)) || {};
+
+        exportText += `Аккаунт ${i}:\n`;
+        Object.entries(accountData).forEach(([hero, count]) => {
+          if(count > 0){
+            exportText += `${hero}: ${count}\n`;
+          }
+        });
+        exportText += "\n";
+      }
+
+      const blob = new Blob([exportText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'hero_collection.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // Событийный сундук
+    document.getElementById('event-chest').addEventListener('click', () => {
+      const eventName = "Грут"; // <<< Здесь можно изменить имя героя для события
+      const data = initAccountData();
+
+      if(!excludedHeroes[eventName]){
+        data[eventName] = (data[eventName] || 0) + 1;
+        saveAccountData(data);
+        renderHeroes();
+        showDropAnimation(eventName, 'rare'); // Предполагаем, что событие всегда легендарное
+      } else {
+        alert("Вы уже собрали этого героя!");
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       updateAccountButtons();
@@ -830,51 +959,46 @@ function renderHeroes() {
         }
       });
 
+      // Скрытая кнопка сброса
       document.getElementById('reset-button').addEventListener('click', () => {
         localStorage.clear();
         location.reload();
       });
+
+      // Открытие изображений в полном размере
+      document.getElementById('heroes-container').addEventListener('click', event => {
+        const clickedImage = event.target.closest('.hero img');
+        if (clickedImage) {
+          const modal = document.getElementById('image-modal');
+          const fullImage = document.getElementById('full-image');
+
+          fullImage.src = clickedImage.src;
+          modal.style.display = 'block';
+
+          modal.querySelector('.close-btn').onclick = () => {
+            modal.style.display = 'none';
+          };
+
+          window.onclick = event => {
+            if (event.target === modal) {
+              modal.style.display = 'none';
+            }
+          };
+
+          fullImage.addEventListener('click', () => {
+            if (fullImage.requestFullscreen) {
+              fullImage.requestFullscreen();
+            } else if (fullImage.mozRequestFullScreen) {
+              fullImage.mozRequestFullScreen();
+            } else if (fullImage.webkitRequestFullscreen) {
+              fullImage.webkitRequestFullscreen();
+            } else if (fullImage.msRequestFullscreen) {
+              fullImage.msRequestFullscreen();
+            }
+          });
+        }
+      });
     });
-
-   // Открытие изображений в полном размере
-document.getElementById('heroes-container').addEventListener('click', event => {
-  const clickedImage = event.target.closest('.hero img');
-  if (clickedImage) {
-    const modal = document.getElementById('image-modal');
-    const fullImage = document.getElementById('full-image');
-
-    // Устанавливаем источник изображения
-    fullImage.src = clickedImage.src;
-
-    // Показываем модальное окно
-    modal.style.display = 'block';
-
-    // Закрытие модального окна
-    modal.querySelector('.close-btn').onclick = () => {
-      modal.style.display = 'none';
-    };
-
-    // Закрытие при клике вне изображения
-    window.onclick = event => {
-      if (event.target === modal) {
-        modal.style.display = 'none';
-      }
-    };
-
-    // Полноэкранный режим (опционально)
-    fullImage.addEventListener('click', () => {
-      if (fullImage.requestFullscreen) {
-        fullImage.requestFullscreen();
-      } else if (fullImage.mozRequestFullScreen) { // Firefox
-        fullImage.mozRequestFullScreen();
-      } else if (fullImage.webkitRequestFullscreen) { // Chrome, Safari and Opera
-        fullImage.webkitRequestFullscreen();
-      } else if (fullImage.msRequestFullscreen) { // IE/Edge
-        fullImage.msRequestFullscreen();
-      }
-    });
-  }
-});
   </script>
 </body>
 </html>
